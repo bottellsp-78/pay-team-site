@@ -7,7 +7,7 @@ const PT = {
   // Contact channels. Set a value to switch that channel on site-wide.
   // Anything left null is automatically removed from the page — no dead links.
   whatsapp: null,                       // e.g. "https://wa.me/447700900000"
-  telegram: null,                       // e.g. "https://t.me/payteam"  <-- set once the @handle is claimed
+  telegram: "https://t.me/ggggdubi",                       // e.g. "https://t.me/payteam"  <-- set once the @handle is claimed
   email: "solutions@pay-team.com",
   phone: null                           // e.g. "+44 20 0000 0000"
 };
@@ -127,7 +127,4 @@ if(topBtn){
 const io = new IntersectionObserver((entries)=>{
   entries.forEach(en=>{ if(en.isIntersecting){ en.target.style.opacity='1'; en.target.style.transform='none'; io.unobserve(en.target);} });
 },{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>{
-  el.style.opacity='0';el.style.transform='translateY(24px)';el.style.transition='.6s cubic-bezier(.2,.7,.2,1)';
-  io.observe(el);
-});
+(function(){var els=document.querySelectorAll('.reveal');var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;var show=function(el){el.style.opacity='1';el.style.transform='none';};if(reduce||!('IntersectionObserver' in window)){els.forEach(show);return;}els.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*0.95){show(el);return;}el.style.opacity='0';el.style.transform='translateY(24px)';el.style.transition='.6s cubic-bezier(.2,.7,.2,1)';io.observe(el);});setTimeout(function(){els.forEach(function(el){if(el.style.opacity==='0'&&el.getBoundingClientRect().top<window.innerHeight)show(el);});},3000);})();
