@@ -4,10 +4,12 @@
 
 /* ---- CONFIG: update these to route leads ---- */
 const PT = {
-  whatsapp: "https://wa.me/00000000000?text=Hi%20Pay-Team%2C%20I%27d%20like%20to%20discuss%20a%20high-risk%20payment%20solution.",
-  telegram: "https://t.me/payteam",
+  // Contact channels. Set a value to switch that channel on site-wide.
+  // Anything left null is automatically removed from the page — no dead links.
+  whatsapp: null,                       // e.g. "https://wa.me/447700900000"
+  telegram: null,                       // e.g. "https://t.me/payteam"  <-- set once the @handle is claimed
   email: "solutions@pay-team.com",
-  phone: "+00 0000 000000"
+  phone: null                           // e.g. "+44 20 0000 0000"
 };
 
 /* ---- Mobile nav ---- */
@@ -63,22 +65,26 @@ document.addEventListener('click', (e) => {
     const fd = new FormData(form);
     for(const [k,v] of fd.entries()) data[k]=v;
     // Compose a pre-filled WhatsApp handoff so the lead reaches you instantly
-    const msg = encodeURIComponent(
-      `New Pay-Team enquiry%0A`+
-      `Vertical: ${data.vertical||'-'}%0A`+
-      `Monthly volume: ${data.volume||'-'}%0A`+
-      `Need: ${data.need||'-'}%0A`+
-      `Name: ${data.name||'-'}%0A`+
-      `Company: ${data.company||'-'}%0A`+
-      `Email: ${data.email||'-'}`
-    );
+    const body = [
+      'New Pay-Team enquiry','',
+      'Industry: ' + (data.vertical||'-'),
+      'Monthly volume: ' + (data.volume||'-'),
+      'Needs: ' + (data.need||'-'),
+      'Name: ' + (data.name||'-'),
+      'Company: ' + (data.company||'-'),
+      'Email: ' + (data.email||'-')
+    ].join('\n');
+
     // Show success state
     steps.forEach(s=>s.classList.remove('active'));
     form.querySelector('.progress')?.style.setProperty('display','none');
     if(success){
       success.classList.add('show');
-      const wa = success.querySelector('.js-wa-handoff');
-      if(wa) wa.href = PT.whatsapp.split('?')[0] + '?text=' + msg;
+      const hand = success.querySelector('.js-handoff');
+      if(hand){
+        if(PT.telegram){ hand.href = PT.telegram; }
+        else { hand.href = 'mailto:' + PT.email + '?subject=' + encodeURIComponent('New Pay-Team enquiry') + '&body=' + encodeURIComponent(body); }
+      }
     }
   });
 
@@ -86,11 +92,25 @@ document.addEventListener('click', (e) => {
 })();
 
 /* ---- Wire up contact links from config ---- */
-document.querySelectorAll('[data-wa]').forEach(a=>a.href=PT.whatsapp);
-document.querySelectorAll('[data-tg]').forEach(a=>a.href=PT.telegram);
-document.querySelectorAll('[data-mail]').forEach(a=>a.href='mailto:'+PT.email);
-document.querySelectorAll('[data-tel]').forEach(a=>a.href='tel:'+PT.phone.replace(/\s/g,''));
-document.querySelectorAll('.js-email-txt').forEach(el=>el.textContent=PT.email);
+(function wireContacts(){
+  function apply(sel, value, build){
+    document.querySelectorAll(sel).forEach(function(el){
+      if(!value){ el.remove(); return; }        // channel switched off -> drop the element entirely
+      el.href = build(value);
+    });
+  }
+  apply('[data-wa]',   PT.whatsapp, function(v){ return v; });
+  apply('[data-tg]',   PT.telegram, function(v){ return v; });
+  apply('[data-mail]', PT.email,    function(v){ return 'mailto:' + v; });
+  apply('[data-tel]',  PT.phone,    function(v){ return 'tel:' + v.replace(/\s/g,''); });
+  document.querySelectorAll('.js-email-txt').forEach(function(el){ if(PT.email) el.textContent = PT.email; });
+  // hide the floating dock if every channel in it was removed
+  var dock = document.querySelector('.dock');
+  if(dock && !dock.querySelector('a')) dock.style.display = 'none';
+  // hide footer social row if empty
+  var soc = document.querySelector('.foot-social');
+  if(soc && !soc.querySelector('a')) soc.style.display = 'none';
+})();
 
 /* ---- Back to top visibility ---- */
 const topBtn = document.querySelector('.d-top');
