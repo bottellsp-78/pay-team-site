@@ -177,15 +177,29 @@ const io = new IntersectionObserver((entries)=>{
         '<button type="button" class="ck-yes">Accept</button>' +
       '</div>';
     document.body.appendChild(bar);
-    requestAnimationFrame(function(){ bar.classList.add('in'); });
+    function syncHeight(){
+      document.body.style.setProperty('--ck-h', bar.offsetHeight + 'px');
+    }
+    syncHeight();
+    window.addEventListener('resize', syncHeight);
+
+    requestAnimationFrame(function(){
+      bar.classList.add('in');
+      document.body.classList.add('ck-open');   // lifts the floating dock clear
+    });
+
+    function dismiss(){
+      bar.classList.remove('in');
+      document.body.classList.remove('ck-open');
+      window.removeEventListener('resize', syncHeight);
+      setTimeout(function(){ bar.remove(); }, 400);
+    }
 
     bar.querySelector('.ck-yes').addEventListener('click', function(){
-      save('granted'); loadGA(); bar.classList.remove('in');
-      setTimeout(function(){ bar.remove(); }, 300);
+      save('granted'); loadGA(); dismiss();
     });
     bar.querySelector('.ck-no').addEventListener('click', function(){
-      save('denied'); bar.classList.remove('in');
-      setTimeout(function(){ bar.remove(); }, 300);
+      save('denied'); dismiss();
     });
   });
 })();
