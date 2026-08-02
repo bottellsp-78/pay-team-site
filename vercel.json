@@ -1,9 +1,65 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
-    { "source": "/home", "destination": "/", "permanent": true },
-    { "source": "/home/", "destination": "/", "permanent": true },
-    { "source": "/index.html", "destination": "/", "permanent": true },
-    { "source": "/resources/index.html", "destination": "/resources/", "permanent": true }
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/home/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/resources/index.html",
+      "destination": "/resources/",
+      "permanent": true
+    },
+    {
+      "source": "/faq.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/cancel.html",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/cancel/cancel_subscription.php",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/cancel/login_reminder.php",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/login_reminder.html",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/password.html",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/privacy.html",
+      "destination": "/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/terms.html",
+      "destination": "/contact.html",
+      "permanent": true
+    }
   ]
 }
