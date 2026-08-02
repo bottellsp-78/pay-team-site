@@ -128,3 +128,64 @@ const io = new IntersectionObserver((entries)=>{
   entries.forEach(en=>{ if(en.isIntersecting){ en.target.style.opacity='1'; en.target.style.transform='none'; io.unobserve(en.target);} });
 },{threshold:.12});
 (function(){var els=document.querySelectorAll('.reveal');var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;var show=function(el){el.style.opacity='1';el.style.transform='none';};if(reduce||!('IntersectionObserver' in window)){els.forEach(show);return;}els.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*0.95){show(el);return;}el.style.opacity='0';el.style.transform='translateY(24px)';el.style.transition='.6s cubic-bezier(.2,.7,.2,1)';io.observe(el);});setTimeout(function(){els.forEach(function(el){if(el.style.opacity==='0'&&el.getBoundingClientRect().top<window.innerHeight)show(el);});},3000);})();
+
+
+/* ===================================================================
+   PT_ANALYTICS — GA4 with UK/EU-compliant consent gating.
+   GA4 is NOT loaded until the visitor accepts. Declining loads nothing.
+   Set MEASUREMENT_ID below to switch analytics on.
+   =================================================================== */
+(function PT_ANALYTICS(){
+  var MEASUREMENT_ID = "G-CHKX20NRHR";
+  var KEY = "pt_consent";
+  if (!MEASUREMENT_ID || MEASUREMENT_ID.indexOf("G-") !== 0) return;  // not configured yet
+
+  function loadGA(){
+    if (window.__ptGaLoaded) return; window.__ptGaLoaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + MEASUREMENT_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ window.dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('consent', 'default', {
+      ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+      analytics_storage: 'granted'
+    });
+    gtag('config', MEASUREMENT_ID, { anonymize_ip: true });
+  }
+
+  var stored = null;
+  try { stored = localStorage.getItem(KEY); } catch(e){}
+  if (stored === 'granted') { loadGA(); return; }
+  if (stored === 'denied') { return; }
+
+  function save(v){ try { localStorage.setItem(KEY, v); } catch(e){} }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var bar = document.createElement('div');
+    bar.className = 'ck';
+    bar.setAttribute('role','dialog');
+    bar.setAttribute('aria-label','Cookie preferences');
+    bar.innerHTML =
+      '<p>We use analytics cookies to see which pages are useful. Nothing is shared with advertisers. ' +
+      '<a href="contact.html">Privacy</a>.</p>' +
+      '<div class="ck-btns">' +
+        '<button type="button" class="ck-no">Decline</button>' +
+        '<button type="button" class="ck-yes">Accept</button>' +
+      '</div>';
+    document.body.appendChild(bar);
+    requestAnimationFrame(function(){ bar.classList.add('in'); });
+
+    bar.querySelector('.ck-yes').addEventListener('click', function(){
+      save('granted'); loadGA(); bar.classList.remove('in');
+      setTimeout(function(){ bar.remove(); }, 300);
+    });
+    bar.querySelector('.ck-no').addEventListener('click', function(){
+      save('denied'); bar.classList.remove('in');
+      setTimeout(function(){ bar.remove(); }, 300);
+    });
+  });
+})();
